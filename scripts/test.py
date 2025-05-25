@@ -20,4 +20,4 @@ def callable_speed(callable: Callable, *args: Any, **kwargs: Any) -> None:
 g = classes.GaiaCSVReader('C:\\Users\\Danilo Patrial\\Python\\Gaia\\database\\GaiaSource_000000-003111.csv')
 for line in g: l = line; break
 
-callable_speed(GaiaSource, *l)
+callable_speed(grade._bp_rp_to_temperature, 1)

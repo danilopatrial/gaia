@@ -28,7 +28,7 @@ if __proceed is False: print(); logging.critical(' Operation canceled. Exiting p
 
 #                                          DOWNLOAD [gedr3/gaia_source]                                          #
 
-download_output_path: str | None = 'D:\\Gaia\\gedr3\\gaia_source' # <== Insert Output Path Here!!!
+download_output_path: str | None = None # <== Insert Output Path Here!!!
 
 if download_output_path is None or not os.path.isdir(download_output_path):
     msg: str = 'Please Insert a valid directory address.'
