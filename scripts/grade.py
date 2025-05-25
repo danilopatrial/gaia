@@ -17,7 +17,7 @@ def _bp_rp_to_temperature(bp_rp: float, prevent_missing_arg: bool = True) -> flo
 
     `prevent_missing_arg: bool` -> When bp_rp return an empty `str` or `None`.
     '''
-    if not bp_rp and prevent_missing_arg: return 5778 # Sun's avg. temp.
+    if (bp_rp is None or bp_rp == '') and prevent_missing_arg: return 5778 # Sun's avg. temp.
     bp_rp: float = max(-0.4, min(bp_rp, 4.0))
     return 8700 / (bp_rp + 0.55)
 
@@ -30,7 +30,7 @@ def _apply_brightness(rgb: RGB, brightness_val: float) -> RGB:
     return tuple(min(255, max(0, int(col * brightness_val))) for col in rgb)
 
 
-def _apparent_to_absolute_mag(phot_g_mean_mag: float, parallax: float ) -> float:
+def _apparent_to_absolute_mag(phot_g_mean_mag: float, parallax: float) -> float:
     '''
     Converts `phot_g_mean_mag` to absolute magnitude.
     _
@@ -74,7 +74,7 @@ def kelvin_to_rgb(bp_rp: float, **kwargs: Any) -> RGB:
     '''
     # def. bp_rp as the average temp. of the Sun's photosphere.
 
-    if not bp_rp: return (0, 0, 0)
+    if (bp_rp is None or bp_rp == ''): return (0, 0, 0)
     prevent_missing_arg: bool = kwargs.get('prevent_missing_arg', True)
 
     temp: float = _bp_rp_to_temperature(bp_rp, prevent_missing_arg)
@@ -114,6 +114,7 @@ def distance_to_luminance(rgb: RGB, parallax: float, max_distance: float = 10_00
     _
     `parallax: float = GaiaSource.parallax`
     '''
+    if parallax <= 0: return rgb
     distance_pc: float = 1_000 / parallax
     distance_pc = max(1, min(distance_pc, max_distance))
     lum: float = 1.0 / (distance_pc ** 2)
@@ -126,6 +127,7 @@ def distance_to_hue(rgb: RGB, parallax: float, max_distance: float = 10_000.0) -
     _
     `parallax: float = GaiaSource.parallax`
     '''
+    if parallax <= 0: return rgb
     distance_pc: float = 1_000 / parallax
     factor: float = min(1.0, distance_pc / max_distance)
     blue_tint: RGB = (
@@ -141,6 +143,7 @@ def distance_to_redshift(rgb: RGB, parallax: float, max_distance: float = 10_000
     _
     `parallax: float = GaiaSource.parallax`
     '''
+    if parallax <= 0: return rgb
     distance_pc: float = 1_000 / parallax
     factor: float = min(1.0, distance_pc / max_distance)
     red_tint: RGB = (
@@ -168,6 +171,10 @@ def metallicity_to_rgb(
 
     `prevent_missing_arg: bool` -> When bp_rp return an empty `str` or `None`.
     '''
+    if dr2_rv_template_fe_h is None:
+        if prevent_missing_arg: return rgb
+        else: dr2_rv_template_fe_h = min_feh
+
     if prevent_missing_arg and not dr2_rv_template_fe_h: return rgb
     t: float = (dr2_rv_template_fe_h - min_feh) / (max_feh - min_feh)
     r = int(rgb[0] + (255 - rgb[0]) * t)
@@ -193,6 +200,9 @@ def bp_rp_to_spectral_rgb(bp_rp: float, prevent_missing_arg: bool = True) -> RGB
     #  G               Yellow         5,200-6,000             #fff4ea       
     #  K               Orange         3,700-5,200             #ffd2a1       
     #  M               Red            <3,700                  #ffcc6f       
+    if (bp_rp is None or bp_rp == '') and prevent_missing_arg:
+        return (0, 0, 0)
+
     if bp_rp < -0.2:
         hex_color = "#9bb0ff"  # O
     elif bp_rp < 0.0:
@@ -214,13 +224,15 @@ def bp_rp_to_spectral_rgb(bp_rp: float, prevent_missing_arg: bool = True) -> RGB
     return (r, g, b)
 
 
-def source_id_to_rgb(source_id: float, prevent_missing_arg: bool = True) -> RGB:
+def source_id_to_rgb(source_id: float, prevent_missing_arg: bool = False) -> RGB:
     '''
     Assign a unique color to each cluster (`source_id`)
     _
     `source_id: float = GaiaSource.source_id`
 
     `prevent_missing_arg: bool` -> When bp_rp return an empty `str` or `None`.
+    Prevent missing arg is set to False because None is hashable and will
+    generate a unique color. Meaningless color.
     '''
     def hue_to_rgb(p: float, q: float, t: float) -> float:
         if t < 0: t += 1
@@ -243,11 +255,31 @@ def source_id_to_rgb(source_id: float, prevent_missing_arg: bool = True) -> RGB:
 
         return (int(r * 255), int(g * 255), int(b * 255))
 
+    if (source_id is None or source_id == '') and prevent_missing_arg:
+        return (0, 0, 0)
+
     h = abs(hash(source_id)) % 360
     return hsl_to_rgb(h / 360.0, 0.5, 0.6)
 
 
-def age_to_rgb(age: float, min_age: float = 0.1, max_age: float = 13.8) -> RGB:
+def age_to_rgb(
+    bp_rp: float,
+    phot_g_mean_mag: float,
+    parallax: float,
+    min_age: float = 0.1,
+    max_age: float = 13.8
+) -> RGB:
+    '''
+    Assign a unique color based on the star's age.
+    _
+    `bp_rp: float = GaiaSource.bp_rp`
+
+    `phot_g_mean_mag: float = GaiaSource.phot_g_mean_mag`
+
+    `parallax: float = GaiaSource.parallax`
+    '''
+    g_abs_mag: float = _apparent_to_absolute_mag(phot_g_mean_mag, parallax)
+    age: float = _estimate_age(bp_rp, g_abs_mag)
     age: float = max(min_age, min(age, max_age))
     t: float = (age - min_age) / (max_age - min_age)
     r: int = int(100 + 155 * t)
