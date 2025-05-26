@@ -12,6 +12,11 @@ from utils import basic_log_config as _basic_log_config
 _basic_log_config()
 
 
+# TODO: Reorganize this whole code, as we need a better error handling and file manipulations, since in various
+# cases people might need to download it in more than one hard drive. Perhaps keep track of the already downloaded
+# files.
+
+
 #                                          WARNINGS AND SECURITY CHECK                                           #
 
 logging.warning(

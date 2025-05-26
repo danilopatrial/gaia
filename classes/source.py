@@ -1,7 +1,8 @@
 
-from typing_extensions import Any
+from typing_extensions import Any, deprecated
 from dataclasses       import dataclass, field
 
+@deprecated('Use Pandas instead. This class is NOT recomended for parsing large ammount of data.')
 @dataclass(frozen=True, slots=True)
 class GaiaSource(object):
 

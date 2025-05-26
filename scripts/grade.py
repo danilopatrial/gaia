@@ -8,6 +8,8 @@ from classes import GaiaSource
 type RGB = Tuple[int, int, int]
 
 
+# TODO: Perhaps do a more precise scientific approach to this functions.
+
 def _bp_rp_to_temperature(bp_rp: float, prevent_missing_arg: bool = True) -> float:
     '''
     Blue Parameter, Red Parameter to Temperature (Kelvin)

@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from typing_extensions  import *
 from classes            import GaiaCSVReader, GaiaSource
 from utils              import *
+from grade              import _bp_rp_to_temperature, kelvin_to_rgb
 from PIL                import Image
 
 import numpy as np
@@ -27,7 +28,7 @@ for file in database_listdir:
 
         x: int = int(float(star.ra) / 360.0 * width)
         y: int = int(height * (1 - (float(star.dec) + 90) / 180.0))
-        temp: float = bp_rp_to_temperature(float(star.bp_rp))
+        temp: float = _bp_rp_to_temperature(float(star.bp_rp))
 
         color: tuple = kelvin_to_rgb(temp)
 
