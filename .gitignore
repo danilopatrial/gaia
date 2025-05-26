@@ -178,3 +178,4 @@ pyrightconfig.json
 # Custom Ignores
 database/*.csv
 scripts/test.py
+pdfs/*.pdf
