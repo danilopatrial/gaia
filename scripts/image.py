@@ -16,10 +16,11 @@ basic_log_config() # <== Set basic logging config.
 Image.MAX_IMAGE_PIXELS = None
 
 
-DATABASE_PATH:  str = '"D:\\Gaia\\gedr3\\gaia_source"'
-IMAGE_PATH:     str = 'images\\equirectangular_kelvin-color_render.png'
+DATABASE_PATH:   str = 'D:\\Gaia\\gedr3\\gaia_source'
+IMAGE_PATH:      str = '..\\images\\equirectangular_kelvin-color_render.png'
+BACKUP_DIR_PATH: str = '..\\backup'
 
-WIDTH, HEIGHT = 3840, 2160
+WIDTH, HEIGHT = 38400 * 2, 21600 * 2
 
 if os.path.isfile(IMAGE_PATH):
     IMAGE: Image.Image = Image.open(IMAGE_PATH)
@@ -50,6 +51,8 @@ def bp_rp_parallax_to_rgb(bp_rp, parallax):
            min(255, max(0, int(green))),
            min(255, max(0, int(blue))))
 
+    return rgb
+
     if parallax <= 0: return rgb
     lum = 1.0 / ((1000.0 / parallax) ** 2)
     return (min(255, int(rgb[0] * lum)),
@@ -72,15 +75,14 @@ def ra_dec_to_coo(ra, dec):
     return x, y
 
 
-print(float('')); exit()
 if __name__ == '__main__' and sys.version_info >= (3, 9):
 
     csv_files: List[str] = os.listdir(DATABASE_PATH)
     length: int = len(csv_files)
 
-    for i, csv_file in enumerate(csv_files):
+    for j, csv_file in enumerate(csv_files):
         df = pd.read_csv(os.path.join(DATABASE_PATH, csv_file))
-        print(f'{i}/{length}', end='\r', flush=True)
+        print(f'{j}/{length}', end='\r', flush=True)
 
         for i, star in df.iterrows():
             bp_rp, parallax = star['bp_rp'], star['parallax']
@@ -95,6 +97,11 @@ if __name__ == '__main__' and sys.version_info >= (3, 9):
             x, y = ra_dec_to_coo(ra, dec)
             rgb = bp_rp_parallax_to_rgb(bp_rp, parallax)
             PIXELS[x, y] = rgb
+
+        if j % 50 == 0:
+            backup_path: str = os.path.join(BACKUP_DIR_PATH, f'backup_c={x}-{y}.png')
+            print(i, csv_file)
+            IMAGE.save(backup_path)
 
 
     IMAGE.save(IMAGE_PATH)

@@ -177,3 +177,4 @@ pyrightconfig.json
 
 # Custom Ignores
 images/*.png
+backup/*.png
