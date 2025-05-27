@@ -2,9 +2,7 @@
 import sys, os, math
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from typing_extensions  import Tuple, Literal, List, Any, NoReturn
-from collections        import defaultdict
-from classes            import GaiaCSVReader, GaiaSource
+from typing_extensions  import List, Any
 
 
 def basic_log_config(*args: Any, **kwargs: Any) -> None:
