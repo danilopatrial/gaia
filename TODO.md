@@ -1,5 +1,0 @@
-# TODO [Gaia Source Image Rendering Project]
-
-## Gaia Source Parsing (1.5 TB)
-- All files are now dowloaded into 3 hard drives, totaling 1.5 TB of data from the Gaia Telescope. I dont want to keep looping thru this file more than one time, so having a single run for all renders will be ideal. I was thinking on pre-processing all data to a easier and lighter file, since i dont need all data given by the csv files. But on the other way i also want to use all the data to make not only images but also graphs, because i think it will be cool.
-- All the parsing will need to be done using an outside library, since using my current OOP method will be too slow, i was thinking on Pandas or something like that. I will assign a depricated decorator into those slow classes, so that we dont use it on the main run.
