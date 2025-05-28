@@ -20,7 +20,7 @@ DATABASE_PATH:   str = 'D:\\Gaia\\gedr3\\gaia_source'
 IMAGE_PATH:      str = '..\\images\\equirectangular_kelvin-color_render.png'
 BACKUP_DIR_PATH: str = '..\\backup'
 
-WIDTH, HEIGHT = 38400 * 2, 21600 * 2
+WIDTH, HEIGHT = 38400, 21600
 
 if os.path.isfile(IMAGE_PATH):
     IMAGE: Image.Image = Image.open(IMAGE_PATH)
@@ -32,7 +32,7 @@ PIXELS = IMAGE.load()
 
 
 @njit
-def bp_rp_parallax_to_rgb(bp_rp, parallax):
+def bp_rp_parallax_to_rgb(bp_rp):
     if bp_rp < -0.4: bp_rp = -0.4
     if bp_rp > 4.0: bp_rp = 4.0
     temp_kelvin = 8700 / (bp_rp + 0.55)
@@ -53,11 +53,11 @@ def bp_rp_parallax_to_rgb(bp_rp, parallax):
 
     return rgb
 
-    if parallax <= 0: return rgb
+    '''if parallax <= 0: return rgb
     lum = 1.0 / ((1000.0 / parallax) ** 2)
     return (min(255, int(rgb[0] * lum)),
             min(255, int(rgb[1] * lum)),
-            min(255, int(rgb[2] * lum)))
+            min(255, int(rgb[2] * lum)))'''
 
 @njit
 def ra_dec_to_coo(ra, dec):
@@ -75,34 +75,38 @@ def ra_dec_to_coo(ra, dec):
     return x, y
 
 
-if __name__ == '__main__' and sys.version_info >= (3, 9):
-
+def main() -> None:
     csv_files: List[str] = os.listdir(DATABASE_PATH)
     length: int = len(csv_files)
 
     for j, csv_file in enumerate(csv_files):
         df = pd.read_csv(os.path.join(DATABASE_PATH, csv_file))
-        print(f'{j}/{length}', end='\r', flush=True)
+        logging.debug(csv_file)
+        print(f'{j}/{length} - {csv_file}', end='\r', flush=True)
 
         for i, star in df.iterrows():
-            bp_rp, parallax = star['bp_rp'], star['parallax']
+            bp_rp = star['bp_rp']
             ra, dec = star['ra'], star['dec']
 
             if pd.isna(bp_rp) or pd.isna(ra) or pd.isna(dec):
                 continue
 
             bp_rp = float(bp_rp)
-            parallax = float(bp_rp) if not pd.isna(parallax) else 0
+            #parallax = float(parallax) if not pd.isna(parallax) else 0
 
             x, y = ra_dec_to_coo(ra, dec)
-            rgb = bp_rp_parallax_to_rgb(bp_rp, parallax)
+            rgb = bp_rp_parallax_to_rgb(bp_rp)
             PIXELS[x, y] = rgb
 
-        if j % 50 == 0:
-            backup_path: str = os.path.join(BACKUP_DIR_PATH, f'backup_c={x}-{y}.png')
-            print(i, csv_file)
-            IMAGE.save(backup_path)
 
 
-    IMAGE.save(IMAGE_PATH)
-    IMAGE.show()
+if __name__ == '__main__' and sys.version_info >= (3, 9):
+
+    try:
+        main()
+    except Exception as e:
+        print(e)
+    finally:
+        logging.info('SAVING IMAGE!\t\t')
+        IMAGE.save(IMAGE_PATH)
+        IMAGE.show()
