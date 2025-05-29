@@ -176,5 +176,5 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python
 
 # Custom Ignores
-images/*.png
+renders/*.png
 backup/*.png
