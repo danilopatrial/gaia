@@ -27,7 +27,7 @@ database_path:  str = 'D:\\Gaia\\gedr3\\gaia_source'
 img_name:       str = 'plate_carree_bp_rp_to_kelvin_coloring'
 render_path:    str = '..\\images\\{}.png'.format(img_name)
 
-width, height = 3840, 2160
+width, height = 38400, 21600
 
 
 @njit
