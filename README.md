@@ -1,1 +1,1 @@
-![Gaia Image](https://raw.githubusercontent.com/danilopatrial/gaia/blob/main/images/plate_carree_bp_rp_to_kelvin_coloring.png)
+![Gaia Image](https://raw.githubusercontent.com/danilopatrial/gaia/main/images/plate_carree_bp_rp_to_kelvin_coloring.png)
