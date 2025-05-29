@@ -9,7 +9,7 @@ import os
 import logging
 
 
-def process_csv(
+def _process_csv(
     filepath: str,
     pixels: Any,
     coo_args_names: Tuple[str, ...],
@@ -22,23 +22,43 @@ def process_csv(
     coo_get = itemgetter(*coo_args_names)
     rgb_get = itemgetter(*rgb_args_names)
 
+    preview_chunk = next(read_csv(filepath, chunksize=1))
+    preview_row = next(preview_chunk.itertuples(index=False))._asdict()
+    test_rgb_args = rgb_get(preview_row)
+    test_coo_args = coo_get(preview_row)
+
+    # Ugly but works!
+    if isinstance(test_rgb_args, tuple):
+        def rgb_wrapper(row_dict):
+            return rgb_func(*rgb_get(row_dict))
+    else:
+        def rgb_wrapper(row_dict):
+            return rgb_func(rgb_get(row_dict))
+
+    if isinstance(test_coo_args, tuple):
+        def coo_wrapper(row_dict):
+            return coo_func(*coo_get(row_dict))
+    else:
+        def coo_wrapper(row_dict):
+            return coo_func(coo_get(row_dict))
+
     for chunk in read_csv(filepath, chunksize=chunksize):
-        for row in chunk.itertuple(index=False):
+        for row in chunk.itertuples(index=False):
             row_dict = row._asdict()
 
+            # NaN check
             if any(row_dict[arg] != row_dict[arg] for arg in coo_args_names + rgb_args_names):
                 continue
 
             coo_args = coo_get(row_dict)
-            rgb_args = rgb_get(row_dict)
+            x, y = coo_wrapper(row_dict)
 
-            x, y = coo_func(*coo_args)
-            rgb  = rgb_func(*rgb_args)
+            rgb = rgb_wrapper(row_dict)
 
             pixels[x, y] = rgb
 
 
-def check_files(
+def _check_files(
     database_path: str,
     coo_args_names: Tuple[str, ...],
     rgb_args_names: Tuple[str, ...],
@@ -61,7 +81,7 @@ def check_files(
 
     for name in coo_args_names + rgb_args_names:
         if name not in sample_df.columns:
-            raise ValueError('Missing expected column: {name}')
+            raise ValueError(f'Missing expected column: {name}')
 
     logging.info('[OK] Ready to start. All files checked.')
 
@@ -83,22 +103,25 @@ def render(
 
     num_csvs: int = len(csv_files)
 
-    check_files(database_path, coo_args_names, rgb_args_names, csv_files)
+    _check_files(database_path, coo_args_names, rgb_args_names, csv_files)
 
     file_paths: List[str] = [os.path.join(database_path, f) for f in csv_files]
 
     for i, file in enumerate(file_paths):
-        logging.debug(file)
+        logging.debug(f'{file}{' '*50}')
         progress_bar(objective=num_csvs, current=i)
 
-        process_csv(
-            file_path=file,
-            coo_args_name=coo_args_names,
-            rgb_args_name=rgb_args_names,
+        _process_csv(
+            filepath=file,
+            coo_args_names=coo_args_names,
+            rgb_args_names=rgb_args_names,
             coo_func=coo_func,
             rgb_func=rgb_func,
-            chunk_size=chunk_size,
+            chunksize=chunk_size,
             pixels=pixels
         )
 
     logging.info(f'[DONE] Finished at {datetime.date.today()}')
+
+
+__all__: List[str] = [var for var in globals().keys() if not var.startswith('_')]

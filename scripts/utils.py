@@ -5,10 +5,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from typing import List, Any
 
 
-def progress_bar(objective: int, current: int) -> None:
+def progress_bar(objective: int, current: int, **kwgs) -> None:
     colorama.init()
     x: int = int(current * 101 / objective)
-    print(f'|\033[1;32m{x * '='}\033[31m{(100 - x) * '='}\033[0m| {current}/{objective}')
+    print(f'|\033[1;32m{x * '='}\033[31m{(100 - x) * '='}\033[0m| {current}/{objective}', end='\r', flush=True)
 
 
 def basic_log_config(*args: Any, **kwargs: Any) -> None:
