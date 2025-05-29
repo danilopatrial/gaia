@@ -1,1 +1,1 @@
-![Alt text](images\plate_carree_bp_rp_to_kelvin_coloring.png)
+![Alt text](gaia/images/plate_carree_bp_rp_to_kelvin_coloring.png)
