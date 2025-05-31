@@ -21,7 +21,6 @@ import logging
 
 
 basic_log_config()
-Image.MAX_IMAGE_PIXELS = None
 
 database_path:  str = 'D:\\Gaia\\gedr3\\gaia_source'
 img_name:       str = 'plate_carree_bp_rp_to_kelvin_coloring'
@@ -49,27 +48,15 @@ def plate_carree(ra: float, dec: float) -> Tuple[int, int]:
     return x, y
 
 
-if __name__ == '__main__' and sys.version_info >= (3, 9):
+if __name__ == '__main__':
 
-    if os.path.isfile(render_path):
-        image: Image.Image = Image.open(render_path)
-    else:
-        image: Image.Image = Image.new('RGB', size=(width, height))
-
-    pixels = image.load()
-
-    try:
-        render(
-            database_path=database_path,
-            pixels=pixels,
-            coo_func=plate_carree,
-            coo_args_names=('ra', 'dec'),
-            rgb_func=bp_rp_to_rgb,
-            rgb_args_names=('bp_rp',)
-        )
-    except Exception as e:
-        print(e)
-    finally:
-        logging.warning('[WARNING] SAVING IMAGE! DO NOT CLOSE THIS APPLICATION.')
-        image.save(render_path)
-        image.show()
+    render(
+        database_path=database_path,
+        coo_func=plate_carree,
+        coo_args_names=('ra', 'dec'),
+        rgb_func=bp_rp_to_rgb,
+        rgb_args_names=('bp_rp',),
+        render_path=render_path,
+        width=width,
+        height=height
+    )

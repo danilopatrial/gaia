@@ -4,6 +4,7 @@ from pandas   import read_csv
 from datetime import datetime
 from operator import itemgetter
 from utils    import progress_bar
+from PIL      import Image
 
 import os
 import logging
@@ -88,40 +89,60 @@ def _check_files(
 
 def render(
     database_path: str,
-    pixels: Any,
     coo_func: Callable[..., Tuple],
     coo_args_names: Tuple[str, ...],
     rgb_func: Callable[..., Tuple],
     rgb_args_names: Tuple[str, ...],
+    render_path: str,
+    width: int,
+    height: int,
     chunk_size: int = 10_000,
 ) -> None:
 
-    csv_files: List[str] = [
-        f for f in os.listdir(database_path)
-        if os.path.isfile(os.path.join(database_path, f)) and f.endswith(".csv")
-        ]
+    Image.MAX_IMAGE_PIXELS = None
 
-    num_csvs: int = len(csv_files)
+    if os.path.isfile(render_path):
+        image: Image.Image = Image.open(render_path)
+    else:
+        image: Image.Image = Image.new('RGB', size=(width, height))
 
-    _check_files(database_path, coo_args_names, rgb_args_names, csv_files)
+    pixels = image.load()
 
-    file_paths: List[str] = [os.path.join(database_path, f) for f in csv_files]
+    try:
 
-    for i, file in enumerate(file_paths):
-        logging.debug(f'{file}{' '*50}')
-        progress_bar(objective=num_csvs, current=i)
+        csv_files: List[str] = [
+            f for f in os.listdir(database_path)
+            if os.path.isfile(os.path.join(database_path, f)) and f.endswith(".csv")
+            ]
 
-        _process_csv(
-            filepath=file,
-            coo_args_names=coo_args_names,
-            rgb_args_names=rgb_args_names,
-            coo_func=coo_func,
-            rgb_func=rgb_func,
-            chunksize=chunk_size,
-            pixels=pixels
-        )
+        num_csvs: int = len(csv_files)
 
-    logging.info(f'[DONE] Finished at {datetime.date.today()}')
+        _check_files(database_path, coo_args_names, rgb_args_names, csv_files)
+
+        file_paths: List[str] = [os.path.join(database_path, f) for f in csv_files]
+
+        for i, file in enumerate(file_paths):
+            logging.debug(f'{file}{' '*50}')
+            progress_bar(objective=num_csvs, current=i)
+
+            _process_csv(
+                filepath=file,
+                coo_args_names=coo_args_names,
+                rgb_args_names=rgb_args_names,
+                coo_func=coo_func,
+                rgb_func=rgb_func,
+                chunksize=chunk_size,
+                pixels=pixels
+            )
+
+        logging.info(f'[DONE] Finished at {datetime.date.today()}')
+
+    except Exception as e:
+        print(e)
+    finally:
+        logging.warning('[WARNING] SAVING IMAGE! DO NOT CLOSE THIS APPLICATION.')
+        image.save(render_path)
+        image.show()
 
 
 __all__: List[str] = [var for var in globals().keys() if not var.startswith('_')]
