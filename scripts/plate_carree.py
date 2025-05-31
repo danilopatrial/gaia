@@ -1,24 +1,8 @@
-
-'''
-Plate Carrée [PC] Projection based on the Star Temperature (Kelvin):
-_
-- The temperature in kelvin is calculated using the bp_rp parameters. (`bp_rp_to_temperature`)
-- *This projection preserves horizontal and vertical alignment, but distorts areas near the poles.
-In star maps or galactic images, this often creates the "U-bend" or smile shape of the Milky Way
-or other features, especially if the projection is centered differently than the galactic plane.*
-'''
-
 from typing   import Tuple
 from utils    import basic_log_config
 from coloring import bp_rp_to_rgb
 from render   import render
 from numba    import njit
-from PIL      import Image
-
-import sys
-import os
-import logging
-
 
 basic_log_config()
 
