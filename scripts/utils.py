@@ -7,7 +7,7 @@ from typing import List, Any
 
 def progress_bar(objective: int, current: int, **kwgs) -> None:
     colorama.init()
-    x: int = int(current * 101 / objective)
+    x: int = int(current * 100 / objective)
     print(f'|\033[1;32m{x * '='}\033[31m{(100 - x) * '='}\033[0m| {current}/{objective}', end='\r', flush=True)
 
 
