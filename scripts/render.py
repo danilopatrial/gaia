@@ -1,4 +1,3 @@
-
 from typing   import Callable, Tuple, Any, List
 from pandas   import read_csv
 from datetime import datetime
@@ -139,7 +138,7 @@ def render(
     except Exception as e:
         raise e
     finally:
-        logging.warning('[WARNING] SAVING IMAGE! DO NOT CLOSE THIS APPLICATION.')
+        logging.warning('SAVING IMAGE! DO NOT CLOSE THIS APPLICATION.')
         image.save(render_path)
         image.show()
 

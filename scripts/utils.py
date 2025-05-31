@@ -1,4 +1,3 @@
-
 import sys, os, math, colorama
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -13,6 +12,8 @@ def progress_bar(objective: int, current: int, **kwgs) -> None:
 
 def basic_log_config(*args: Any, **kwargs: Any) -> None:
     import logging
+
+    logging.getLogger('numba').setLevel(logging.WARNING)
 
     logger: logging.Logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
