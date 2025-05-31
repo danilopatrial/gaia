@@ -98,7 +98,6 @@ def render(
     height: int,
     chunk_size: int = 10_000,
 ) -> None:
-
     Image.MAX_IMAGE_PIXELS = None
 
     if os.path.isfile(render_path):
@@ -135,7 +134,7 @@ def render(
                 pixels=pixels
             )
 
-        logging.info(f'[DONE] Finished at {datetime.date.today()}')
+        logging.info(f'[DONE] Finished at {datetime.now()}')
 
     except Exception as e:
         raise e
