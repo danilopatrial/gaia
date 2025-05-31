@@ -1,16 +1,17 @@
+from typing_extensions import List
+from utils             import basic_log_config
 
-# NOTE: I didn't use this exact code to download the Gaia files, but I'm almost sure it works perfectly,
-# however, if you find any error or problem, please report it.
+import sys
+import os
+import hashlib
+import requests
+import gzip
+import shutil
+import time
+import logging
 
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from typing_extensions import *
-import hashlib, requests, zipfile, gzip, shutil, time, logging
-
-from utils import basic_log_config
-basic_log_config() # Set Basic Log Config.
-
+basic_log_config()
 
 logging.warning(
     '[STORAGE WARNING]:\nRunning the following code will download the entire gedr3/gaia_source database, '
@@ -24,10 +25,10 @@ __proceed: bool = input('Are you sure do you want to proceed? [YES/NO]: ').upper
 if __proceed is False: print(); logging.fatal(' Operation canceled. Exiting program...'); sys.exit()
 
 
-OUTPUT_PATH: str | None = None # <=== Insert Output Path Here!!!
+output_path: str | None = None # <=== Insert Output Path Here!!!
 
-if OUTPUT_PATH is None or not os.path.isdir(OUTPUT_PATH):
-    raise NotADirectoryError(f'{OUTPUT_PATH} is not a valid directory.')
+if output_path is None or not os.path.isdir(output_path):
+    raise NotADirectoryError(f'{output_path} is not a valid directory.')
 
 
 class HashMismatchError(Exception): ...
@@ -65,8 +66,8 @@ def unzip_file(filepath: str) -> None:
 
 def download(md5sum: str, filename: str) -> None:
     url = f'http://cdn.gea.esac.esa.int/Gaia/gedr3/gaia_source/{filename}'
-    output_path = os.path.join(OUTPUT_PATH, filename)
-    output_path_unzipped = output_path[:-3]  # remove .gz for unzipped file
+    output_path = os.path.join(output_path, filename)
+    output_path_unzipped = output_path[:-3]
 
     if os.path.exists(output_path_unzipped):
         logging.debug(f'{filename} already downloaded and unzipped.')
