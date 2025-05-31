@@ -14,7 +14,7 @@ basic_log_config() # Set Basic Log Config.
 
 logging.warning(
     '[STORAGE WARNING]:\nRunning the following code will download the entire gedr3/gaia_source database, '
-    'which exceeds 1.5 TB in size and will be saved as CSV files.\n'
+    'which exceeds 1.6 TB in size and will be saved as CSV files.\n'
     'Ensure you have sufficient disk space and bandwidth before proceeding.'
     )
 
