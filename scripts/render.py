@@ -138,6 +138,7 @@ def render(
     except Exception as e:
         raise e
     finally:
+        print()
         logging.warning('SAVING IMAGE! DO NOT CLOSE THIS APPLICATION.')
         image.save(render_path)
         image.show()

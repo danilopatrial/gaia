@@ -1,4 +1,3 @@
-from typing   import Tuple
 from utils    import basic_log_config
 from coloring import bp_rp_to_rgb
 from render   import render

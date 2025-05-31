@@ -1,4 +1,3 @@
-from typing   import Tuple
 from utils    import basic_log_config
 from coloring import bp_rp_to_rgb
 from render   import render
@@ -29,20 +28,23 @@ def _solve_theta(phi):
 
 @njit
 def mollweide(ra, dec):
-    ra  = ra  * (math.pi / 180)
-    dec = dec * (math.pi / 180)
+    pi = math.pi
+    sqrt2 = math.sqrt(2)
+
+    ra  = ra  * (pi / 180)
+    dec = dec * (pi / 180)
 
     # Projection
-    lam = ra - math.pi
+    lam = ra - pi
     phi = dec
     theta = _solve_theta(phi)
 
     # Meollweid coordinate range: x_proj ∈ [-2√2, 2√2], y_proj ∈ [-√2, √2]
-    x_proj = (2 * math.sqrt(2) / math.pi) * lam * math.cos(theta)
-    y_proj = math.sqrt(2) * math.sin(theta)
+    x_proj = (2 * sqrt2 / pi) * lam * math.cos(theta)
+    y_proj = sqrt2 * math.sin(theta)
 
-    x_norm = (x_proj + 2 * math.sqrt(2)) / (4 * math.sqrt(2))
-    y_norm = (y_proj + math.sqrt(2)) / (2 * math.sqrt(2))
+    x_norm = (x_proj + 2 * sqrt2) / (4 * sqrt2)
+    y_norm = (y_proj + sqrt2) / (2 * sqrt2)
 
     x = int(x_norm * width)
     y = int((1 - y_norm) * height)
