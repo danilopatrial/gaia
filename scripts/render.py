@@ -138,7 +138,7 @@ def render(
         logging.info(f'[DONE] Finished at {datetime.date.today()}')
 
     except Exception as e:
-        print(e)
+        raise e
     finally:
         logging.warning('[WARNING] SAVING IMAGE! DO NOT CLOSE THIS APPLICATION.')
         image.save(render_path)
