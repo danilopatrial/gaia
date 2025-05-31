@@ -16,7 +16,7 @@ width, height = 38400, 21600
 
 
 @njit
-def _solve_theta(phi: float) -> float:
+def _solve_theta(phi):
     theta = phi
     for _ in range(10):
         numerator = 2 * theta + math.sin(2 * theta) - math.pi * math.sin(phi)
@@ -28,17 +28,30 @@ def _solve_theta(phi: float) -> float:
     return theta
 
 @njit
-def mollweide(ra: float, dec: float) -> Tuple[int, int]:
-    ra = ra  * (math.pi / 180)
+def mollweide(ra, dec):
+    ra  = ra  * (math.pi / 180)
     dec = dec * (math.pi / 180)
 
+    # Projection
     lam = ra - math.pi
     phi = dec
-
     theta = _solve_theta(phi)
 
-    x = (2 * math.sqrt(2) / math.pi) * lam * math.cos(theta)
-    y = math.sqrt(2) * math.sin(theta)
+    # Meollweid coordinate range: x_proj ∈ [-2√2, 2√2], y_proj ∈ [-√2, √2]
+    x_proj = (2 * math.sqrt(2) / math.pi) * lam * math.cos(theta)
+    y_proj = math.sqrt(2) * math.sin(theta)
+
+    x_norm = (x_proj + 2 * math.sqrt(2)) / (4 * math.sqrt(2))
+    y_norm = (y_proj + math.sqrt(2)) / (2 * math.sqrt(2))
+
+    x = int(x_norm * width)
+    y = int((1 - y_norm) * height)
+
+    # clamp
+    if x < 0: x = 0
+    if x >= width: x = width - 1
+    if y < 0: y = 0
+    if y >= height: y = height - 1
 
     return x, y
 
