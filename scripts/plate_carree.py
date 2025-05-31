@@ -14,7 +14,7 @@ width, height = 38400, 21600
 
 
 @njit
-def plate_carree(ra: float, dec: float) -> Tuple[int, int]:
+def plate_carree(ra, dec):
     '''
     Plate Carrée Projection from Right Ascension [ra] and Declination [dec]
     '''
