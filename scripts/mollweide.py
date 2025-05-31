@@ -50,7 +50,7 @@ if __name__ == '__main__':
         coo_func=mollweide,
         coo_args_names=('ra', 'dec'),
         rgb_func=bp_rp_to_rgb,
-        rgb_args_names=('bp_rp'),
+        rgb_args_names=('bp_rp',),
         render_path=render_path,
         width=width,
         height=height
