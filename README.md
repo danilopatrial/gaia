@@ -1,9 +1,9 @@
-# Gaia Souce Image Creation [GSIC]
+# Gaia Source Image Creation - GSIC
 > [!Note]
 > This project is not finished and is still being worked on. Please report any problem.
 
 ![Gaia Image](images/plate_carree_bp_rp_to_kelvin_coloring.png)
-###### **Plate Carrée Projection (temperature to rgb). This image was originally rendered at 38400 x 21600 and latter resized to 1080p*.
+**Plate Carrée Projection (temperature to rgb). This image was originally rendered at 38400 x 21600 and latter resized to 1080p*.
 
 ## GSIC
 Using data from the [Gaia Source Catalog](http://cdn.gea.esac.esa.int/Gaia/gedr3/gaia_source/) to create a visual representation of our Universe. By parsing stellar parameters such as right ascension (RA), declination (Dec), parallax, and color indices (BP-RP), the system plots stars based on their spatial position, brightness, and color. The result is a data-driven map that offers insight into the structure and distribution of stars in our galaxy.
