@@ -16,6 +16,8 @@ def _process_csv(
     rgb_args_names: Tuple[str, ...],
     coo_func: Callable[..., Tuple],
     rgb_func: Callable[..., Tuple],
+    width: int,
+    height: int,
     chunksize: int = 10000,
 ) -> None:
 
@@ -37,10 +39,10 @@ def _process_csv(
 
     if isinstance(test_coo_args, tuple):
         def coo_wrapper(row_dict):
-            return coo_func(*coo_get(row_dict))
+            return coo_func(*coo_get(row_dict), width, height)
     else:
         def coo_wrapper(row_dict):
-            return coo_func(coo_get(row_dict))
+            return coo_func(coo_get(row_dict), width, height)
 
     for chunk in read_csv(filepath, chunksize=chunksize):
         for row in chunk.itertuples(index=False):
@@ -50,9 +52,7 @@ def _process_csv(
             if any(row_dict[arg] != row_dict[arg] for arg in coo_args_names + rgb_args_names):
                 continue
 
-            coo_args = coo_get(row_dict)
             x, y = coo_wrapper(row_dict)
-
             rgb = rgb_wrapper(row_dict)
 
             pixels[x, y] = rgb
@@ -130,9 +130,12 @@ def render(
                 coo_func=coo_func,
                 rgb_func=rgb_func,
                 chunksize=chunk_size,
-                pixels=pixels
+                pixels=pixels,
+                width=width,
+                height=height
             )
 
+        print()
         logging.info(f'[DONE] Finished at {datetime.now()}')
 
     except Exception as e:
