@@ -15,7 +15,7 @@ if __name__ != '__main__':
     raise ImportError('This script is not supposed to be imported')
 
 
-database_path: str | None = "C:\\Users\\Danilo Patrial\\Gaia\\gedr3\\gaia_source"
+database_path: str | None = "D:\\Gaia\\gedr3\\gaia_source"
 
 if not os.path.isdir(database_path):
     raise NotADirectoryError('Please insert a valid directory path')
