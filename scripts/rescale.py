@@ -15,4 +15,4 @@ def rescale(image_path: str, output_path: str = '..\\images', size: tuple = _4k)
     rescaled.save(os.path.join(output_path, os.path.basename(image_path)))
 
 if __name__ == '__main__':
-    rescale('..\\renders\\plate_carree_bp_rp_to_kelvin_coloring.png', size=_1080p)
+    rescale('..\\renders\\hammer_aitoff_bp_rp_to_rgb.png', size=_1080p)
